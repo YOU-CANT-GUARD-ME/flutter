@@ -59,22 +59,70 @@ class _HomePageState extends State<HomePage> {
         backgroundColor: Colors.grey[900],
         child: Column(
           children: [
-            // logo
-            Container(
-              padding: EdgeInsets.only(top: 100, bottom: 20),
-              child: Image.asset(
-                'lib/images/logo.png',
-                color: Colors.white,
-                width: 150,
-              ),
-            ),
+           Expanded(
+             child: Column(
+               children: [
+                 // logo
+                 Container(
+                   padding: EdgeInsets.only(top: 100, bottom: 20),
+                   child: Image.asset(
+                     'lib/images/logo.png',
+                     color: Colors.white,
+                     width: 150,
+                   ),
+                 ),
+             
+                 Padding(
+                   padding: EdgeInsetsGeometry.symmetric(horizontal: 25),
+                   child: Divider(
+                     color: Colors.grey[900],
+                   ),
+                 ),
+             
+                 Padding(
+                   padding: EdgeInsetsGeometry.only(left: 25),
+                   child: ListTile(
+                     leading: Icon(
+                       Icons.home,
+                       color: Colors.white,
+                     ),
+                     title: Text(
+                       'Home',
+                       style: TextStyle(color: Colors.white),
+                     ),
+                   ),
+                 ),
+             
+                 Padding(
+                   padding: EdgeInsetsGeometry.only(left: 25),
+                   child: ListTile(
+                     leading: Icon(
+                       Icons.info,
+                       color: Colors.white,
+                     ),
+                     title: Text(
+                       'About',
+                       style: TextStyle(color: Colors.white),
+                     ),
+                   ),
+                 ),
+               ],
+             ),
+           ),
 
             Padding(
-              padding: EdgeInsetsGeometry.symmetric(horizontal: 25),
-              child: Divider(
-                color: Colors.grey[800],
+              padding: EdgeInsetsGeometry.only(left: 25, bottom: 25),
+              child: ListTile(
+                leading: Icon(
+                  Icons.logout,
+                  color: Colors.white,
+                ),
+                title: Text(
+                  'Logout',
+                  style: TextStyle(color: Colors.white),
+                ),
               ),
-            )
+            ),
 
             // other pages
           ],
