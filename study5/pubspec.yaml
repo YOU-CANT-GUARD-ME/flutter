@@ -1,4 +1,4 @@
-name: study5
+name: daily_tarot_app
 description: "A new Flutter project."
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
@@ -19,7 +19,7 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 version: 1.0.0+1
 
 environment:
-  sdk: ^3.12.2
+  sdk: ^3.10.4
 
 # Dependencies specify other packages that your package needs in order to work.
 # To automatically upgrade your package dependencies to the latest versions
@@ -34,6 +34,9 @@ dependencies:
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.8
+  flutter_svg:
+  shared_preferences:
+  url_launcher:
 
 dev_dependencies:
   flutter_test:
@@ -61,6 +64,11 @@ flutter:
   # assets:
   #   - images/a_dot_burr.jpeg
   #   - images/a_dot_ham.jpeg
+  assets:
+    - assets/img/
+    - assets/img/tarot_cards/
+    - assets/icons/
+    - assets/data/
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images
@@ -85,5 +93,27 @@ flutter:
   #       - asset: fonts/TrajanPro_Bold.ttf
   #         weight: 700
   #
+  fonts:
+    - family: N
+      fonts:
+        - asset: assets/fonts/Noto_Sans_KR/static/NotoSansKR-ExtraBold.ttf
+          weight: 800
+        - asset: assets/fonts/Noto_Sans_KR/static/NotoSansKR-Bold.ttf
+          weight: 700
+        - asset: assets/fonts/Noto_Sans_KR/static/NotoSansKR-SemiBold.ttf
+          weight: 600
+        - asset: assets/fonts/Noto_Sans_KR/static/NotoSansKR-Medium.ttf
+          weight: 500
+        - asset: assets/fonts/Noto_Sans_KR/static/NotoSansKR-Regular.ttf
+          weight: 400
+    - family: M
+      fonts:
+        - asset: assets/fonts/나눔명조/NanumFontSetup_TTF_MYUNGJO/NanumMyeongjoExtraBold.ttf
+          weight: 700
+        - asset: assets/fonts/나눔명조/NanumFontSetup_TTF_MYUNGJO/NanumMyeongjoBold.ttf
+          weight: 500
+        - asset: assets/fonts/나눔명조/NanumFontSetup_TTF_MYUNGJO/NanumMyeongjo.ttf
+          weight: 300
+
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/to/font-from-package
