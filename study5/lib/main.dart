@@ -560,9 +560,8 @@ class _MyAppState extends State<MyApp> with TickerProviderStateMixin{
         width: 80,
         height: 80,
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(100),
-          border: Border.all(color: Colors.white70, width: 1.5),
-          color: selected ? Colors.white24 : Colors.transparent
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(color: Colors.white, width: 1.5),
         ),
         alignment: Alignment.center,
         child: SvgPicture.asset(icon, width: 55,),
@@ -578,6 +577,7 @@ class _MyAppState extends State<MyApp> with TickerProviderStateMixin{
           logoAndTitle("성별을 선택해주세요."),
           SizedBox(height: 90,),
           Row(
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
               genderButton(icon: "assets/icons/female_24dp_E3E3E3_FILL0_wght100_GRAD0_opsz24.svg", label: "여성", onTap: () {
                 setState(() {
@@ -591,7 +591,7 @@ class _MyAppState extends State<MyApp> with TickerProviderStateMixin{
                   selectedGender = "남성";
                 });
                 moveToPage(4);
-              })
+              }),
             ],
           ),
           Spacer(),
@@ -600,5 +600,102 @@ class _MyAppState extends State<MyApp> with TickerProviderStateMixin{
         ],
       ),
     );
+  }
+
+  Widget buildBirthDatePage() {
+    final days = buildCalenderDays(calenderYear, calenderMonth);
+    return SafeArea(
+      child: Column(
+        children: [
+          SizedBox(height: 120,),
+          logoAndTitle("태어난 날짜를 입력해주세요."),
+          SizedBox(height: 25,),
+          InkWell(
+            onTap: () => showYearMonthPicker(),
+            child: Text("$calenderYear.$calenderMonth", style: TextStyle(color: Colors.white, fontSize: 24, fontFamily: "M", fontWeight: FontWeight.w700),),
+          ),
+          SizedBox(height: 20,),
+          Padding(
+            padding: EdgeInsetsGeometry.symmetric(horizontal: 40),
+            child: GridView.builder(
+              shrinkWrap: true,
+              physics: NeverScrollableScrollPhysics(),
+              itemCount: days.length,
+              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 7,
+                mainAxisSpacing: 12,
+                crossAxisSpacing: 6,
+                childAspectRatio: 1
+              ),
+              itemBuilder: (context, index) {
+                final cell = days[index];
+                final date = cell.date;
+                final isSelected = selectedBirthDate != null && isSameDate(selectedBirthDate!, date);
+                return InkWell(
+                  borderRadius: BorderRadius.circular(100),
+                  onTap: cell.isCurrentMonth ? () {
+                    setState(() {
+                      selectedBirthDate = date;
+                    });
+                    moveToPage(5);
+                  } : null,
+                  child: Container(
+                    width: 38,
+                    height: 38,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(100),
+                      color: isSelected ? Colors.white : Colors.transparent
+                    ),
+                    alignment: Alignment.center,
+                    child: Text("${date.day}", style: TextStyle(color: isSelected ? Color(0xff340B57) : Colors.white.withValues(alpha: cell.isCurrentMonth ? 1 : 0.25), fontSize: 16, fontWeight: FontWeight.w700, fontFamily: "M"),),
+                  ),
+                );
+              },
+            ),
+          ),
+          Spacer(),
+          OutLineButton(title: "이전", onTap: () => moveToPage(3)),
+          SizedBox(height: 55,),
+        ],
+      ),
+    );
+  }
+
+  Widget buildBirthTimePage() {
+    const double dialSize = 200;
+    return SafeArea(
+      child: Column(
+        children: [
+          SizedBox(height: 120,),
+          logoAndTitle("태어난 날짜를 입력해주세요."),
+          SizedBox(height: 20,),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              GestureDetector(
+                onTap: () {
+                  setState(() {
+                    _isSelectingHour = true;
+                  });
+                },
+                child: Container(
+                  width: 60,
+                  height: 50,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(
+                      color: _isSelectingHour ? Colors.white54 : Colors.transparent,
+                      width: 1.5
+                    )
+                  ),
+                  alignment: Alignment.center,
+                  child: Text(_tempHour.toString().padLeft(2, "0"), style: TextStyle(color: _isSelectingHour ? Colors.white54, fontSize: 28, fontFamily: "M", fontWeight: FontWeight.w700),),
+                ),
+              )
+            ],
+          )
+        ],
+      ),
+    )
   }
 }
