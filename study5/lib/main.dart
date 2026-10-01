@@ -666,7 +666,7 @@ class _MyAppState extends State<MyApp> with TickerProviderStateMixin{
       child: Column(
         children: [
           SizedBox(height: 120,),
-          logoAndTitle("태어난 시간을 입력해주세요."),
+          logoAndTitle("태어난 시가을 입력해주세요."),
           SizedBox(height: 20,),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -698,25 +698,25 @@ class _MyAppState extends State<MyApp> with TickerProviderStateMixin{
               GestureDetector(
                 onTap: () {
                   setState(() {
-                    _isSelectingHour = false;
+                    _isSelectingHour = true;
                   });
                 },
                 child: Container(
                   width: 60,
                   height: 50,
                   decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(12),
-                    border: Border.all(
-                      color: !_isSelectingHour ? Colors.white54 : Colors.transparent,
-                      width: 1.5
-                    )
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(
+                        color: _isSelectingHour ? Colors.white54 : Colors.transparent,
+                        width: 1.5,
+                      )
                   ),
                   alignment: Alignment.center,
-                  child: Text(_tempMinute.toString().padLeft(2, "0"), style: TextStyle(color: !_isSelectingHour ? Colors.white : Colors.white54, fontSize: 28, fontFamily: "M", fontWeight: FontWeight.w700),),
+                  child: Text(_tempHour.toString().padLeft(2, "0"), style: TextStyle(color: _isSelectingHour ? Colors.white : Colors.white54, fontSize: 28, fontFamily: "M", fontWeight: FontWeight.w700),),
                 ),
               ),
-              SizedBox(width: 20,),
               Column(
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   GestureDetector(
                     onTap: () {
@@ -727,10 +727,11 @@ class _MyAppState extends State<MyApp> with TickerProviderStateMixin{
                     child: Container(
                       padding: EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                       decoration: BoxDecoration(
-                          borderRadius: BorderRadius.vertical(top: Radius.circular(12)),
-                          border: Border.all(color: isAm ? Colors.white : Colors.white54, width: 1.5)
+                        borderRadius: BorderRadius.vertical(top: Radius.circular(12)),
+                        border: Border.all(color: isAm ? Colors.white : Colors.white54, width: 1.5)
                       ),
-                      child: Text("AM", style: TextStyle(color: isAm ? Colors.white : Colors.white54, fontSize: 14, fontFamily: "M", fontWeight: FontWeight.w700),),
+                      alignment: Alignment.center,
+                      child: Text("AM", style: TextStyle(color: isAm ? Colors.white : Colors.white54, fontSize: 14, fontWeight: FontWeight.w700, fontFamily: "M"),),
                     ),
                   ),
                   GestureDetector(
@@ -742,10 +743,11 @@ class _MyAppState extends State<MyApp> with TickerProviderStateMixin{
                     child: Container(
                       padding: EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                       decoration: BoxDecoration(
-                          borderRadius: BorderRadius.vertical(bottom: Radius.circular(12)),
-                          border: Border.all(color: !isAm ? Colors.white : Colors.white54, width: 1.5)
+                        borderRadius: BorderRadius.vertical(bottom: Radius.circular(12)),
+                        border: Border.all(color: !isAm ? Colors.white : Colors.white54, width: 1.5)
                       ),
-                      child: Text("PM", style: TextStyle(color: !isAm ? Colors.white : Colors.white54, fontSize: 14, fontFamily: "M", fontWeight: FontWeight.w700),),
+                      alignment: Alignment.center,
+                      child: Text("PM", style: TextStyle(color: !isAm ? Colors.white : Colors.white54, fontSize: 14, fontWeight: FontWeight.w700, fontFamily: "M"),),
                     ),
                   ),
                 ],
@@ -754,8 +756,8 @@ class _MyAppState extends State<MyApp> with TickerProviderStateMixin{
           ),
           SizedBox(height: 20,),
           SizedBox(
-            height: dialSize,
             width: dialSize,
+            height: dialSize,
             child: GestureDetector(
               onPanUpdate: (details) => _handleDialTouch(details.localPosition, dialSize),
               onPanEnd: (details) => _handleDialTouchEnd(),
@@ -765,7 +767,7 @@ class _MyAppState extends State<MyApp> with TickerProviderStateMixin{
               },
               child: CustomPaint(
                 size: Size(dialSize, dialSize),
-                painter: _ClockDialPainter(),
+                painter: _ClockDialPainter,
               ),
             ),
           ),
@@ -775,7 +777,7 @@ class _MyAppState extends State<MyApp> with TickerProviderStateMixin{
             children: [
               OutLineButton(title: "이전", onTap: () => moveToPage(4)),
               SizedBox(width: 14,),
-              OutLineButton(title: "잘 모르겠어요.", onTap: () {
+              OutLineButton(title: "잘 모르겠어요", onTap: () {
                 setState(() {
                   unkownTime = true;
                   selectedHour = null;
@@ -785,9 +787,115 @@ class _MyAppState extends State<MyApp> with TickerProviderStateMixin{
               })
             ],
           ),
-          SizedBox(height: 55,),
+          SizedBox(height: 55,)
         ],
       ),
     );
+  }
+
+  Widget infoBox(String title, String value, VoidCallback onTap) {
+    return Padding(
+      padding: EdgeInsetsGeometry.symmetric(horizontal: 50, vertical: 6),
+      child: InkWell(
+        onTap: onTap,
+        child: Container(
+          padding: EdgeInsets.symmetric(horizontal: 28, vertical: 14),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(100),
+            border: Border.all(color: Colors.white60, width: 1.5),
+          ),
+          child: Row(
+            children: [
+              Text("$title : ", style: TextStyle(color: Colors.white, fontSize: 15),),
+              Expanded(child: Text(value, style: TextStyle(color: Colors.white, fontSize: 15), overflow: TextOverflow.ellipsis,))
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget buildConfirmPage() {
+    return SafeArea(
+      child: Column(
+        children: [
+          SizedBox(height: 120,),
+          logoAndTitle("입력한 정보가 맞는지 확인해주세요."),
+          SizedBox(height: 40,),
+          infoBox("이름", nameController.text, () => moveToPage(1)),
+          Padding(
+            padding: EdgeInsetsGeometry.symmetric(horizontal: 50, vertical: 6),
+            child: Row(
+              children: [
+                Expanded(child: InkWell(
+                  onTap: () => moveToPage(2),
+                  child: Container(
+                    padding: EdgeInsets.symmetric(horizontal: 28, vertical: 14),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(100),
+                      border: Border.all(color: Colors.white60, width: 1.5)
+                    ),
+                    child: Text("나이 : ${ageController.text}세", style: TextStyle(color: Colors.white, fontSize: 15),),
+                  ),
+                )),
+                SizedBox(width: 18,),
+                InkWell(
+                  onTap: () => moveToPage(3),
+                  child: Container(
+                    padding: EdgeInsets.symmetric(horizontal: 28, vertical: 14),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(100),
+                      border: Border.all(color: Colors.white60, width: 1.5),
+                    ),
+                    alignment: Alignment.center,
+                    child: SvgPicture.asset(selectedGender == "남성" ? "assets/icons/male_24dp_E3E3E3_FILL0_wght100_GRAD0_opsz24.svg" : "assets/icons/female_24dp_E3E3E3_FILL0_wght100_GRAD0_opsz24.svg"),
+                  ),
+                )
+              ],
+            ),
+          ),
+          infoBox("새일", formatBirthdate, () => moveToPage(4)),
+          infoBox("태어난 시간", formBirthTime, () => moveToPage(5)),
+          SizedBox(height: 60,),
+          BottomActionButton(img: false, title: "시작하기", checkedIcon: true, onTap: () => Navigator.pushAndRemoveUntil(context, PageRouteBuilder(pageBuilder: (context, animation, secondaryAnimation) {
+            return HomePage();
+          }, transitionsBuilder: (context, animation, secondaryAnimation, child) {
+            return FadeTransition(opacity: animation, child: child,);
+          }), (route) => false)),
+        ],
+      ),
+    );
+  }
+}
+
+class _ClockDialPainter extends CustomPainter {
+  final bool isHourMode;
+  final int selectedValue;
+  _ClockDialPainter({required this.isHourMode, required this.selectedValue});
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final center = Offset(size.width / 2, size.height / 2);
+    final radius = size.width / 2;
+    final numberRadius = radius - 24;
+
+    canvas.drawCircle(center, radius, Paint()..color=Colors.white..style=PaintingStyle.stroke..strokeWidth=1.5);
+
+    double selectedAngle;
+    if(isHourMode) {
+      selectedAngle = (selectedValue % 12) / 12 * 2 * pi;
+    } else {
+      selectedAngle = selectedValue / 60 * 2 * pi;
+    }
+
+    final handX = center.dx + (numberRadius - 18) * sin(selectedAngle);
+    final handY = center.dy + (numberRadius - 18) * cos(selectedAngle);
+
+    canvas.drawLine(center, Offset(handX, handY), Paint()..color=Colors.white..strokeWidth = 1.5);
+    canvas.drawCircle(center, 4, Paint()..color=Colors.white);
+
+    if(isHourMode) {
+
+    }
   }
 }
