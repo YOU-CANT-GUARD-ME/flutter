@@ -1,4 +1,3 @@
-import 'dart:ffi';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
@@ -667,7 +666,7 @@ class _MyAppState extends State<MyApp> with TickerProviderStateMixin{
       child: Column(
         children: [
           SizedBox(height: 120,),
-          logoAndTitle("태어난 날짜를 입력해주세요."),
+          logoAndTitle("태어난 시간을 입력해주세요."),
           SizedBox(height: 20,),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -685,15 +684,108 @@ class _MyAppState extends State<MyApp> with TickerProviderStateMixin{
                     borderRadius: BorderRadius.circular(12),
                     border: Border.all(
                       color: _isSelectingHour ? Colors.white54 : Colors.transparent,
+                      width: 1.5,
+                    )
+                  ),
+                  alignment: Alignment.center,
+                  child: Text(_tempHour.toString().padLeft(2, "0"), style: TextStyle(color: _isSelectingHour ? Colors.white : Colors.white54, fontSize: 28, fontFamily: "M", fontWeight: FontWeight.w700),),
+                ),
+              ),
+              Padding(
+                padding: EdgeInsetsGeometry.symmetric(horizontal: 20),
+                child: Text(":", style: TextStyle(color: Colors.white, fontSize: 28, fontFamily: "M", fontWeight: FontWeight.w700),),
+              ),
+              GestureDetector(
+                onTap: () {
+                  setState(() {
+                    _isSelectingHour = false;
+                  });
+                },
+                child: Container(
+                  width: 60,
+                  height: 50,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(
+                      color: !_isSelectingHour ? Colors.white54 : Colors.transparent,
                       width: 1.5
                     )
                   ),
                   alignment: Alignment.center,
-                  child: Text(_tempHour.toString().padLeft(2, "0"), style: TextStyle(color: _isSelectingHour ? Colors.white54, fontSize: 28, fontFamily: "M", fontWeight: FontWeight.w700),),
+                  child: Text(_tempMinute.toString().padLeft(2, "0"), style: TextStyle(color: !_isSelectingHour ? Colors.white : Colors.white54, fontSize: 28, fontFamily: "M", fontWeight: FontWeight.w700),),
                 ),
+              ),
+              SizedBox(width: 20,),
+              Column(
+                children: [
+                  GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        isAm = true;
+                      });
+                    },
+                    child: Container(
+                      padding: EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.vertical(top: Radius.circular(12)),
+                          border: Border.all(color: isAm ? Colors.white : Colors.white54, width: 1.5)
+                      ),
+                      child: Text("AM", style: TextStyle(color: isAm ? Colors.white : Colors.white54, fontSize: 14, fontFamily: "M", fontWeight: FontWeight.w700),),
+                    ),
+                  ),
+                  GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        isAm = false;
+                      });
+                    },
+                    child: Container(
+                      padding: EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.vertical(bottom: Radius.circular(12)),
+                          border: Border.all(color: !isAm ? Colors.white : Colors.white54, width: 1.5)
+                      ),
+                      child: Text("PM", style: TextStyle(color: !isAm ? Colors.white : Colors.white54, fontSize: 14, fontFamily: "M", fontWeight: FontWeight.w700),),
+                    ),
+                  ),
+                ],
               )
             ],
-          )
+          ),
+          SizedBox(height: 20,),
+          SizedBox(
+            height: dialSize,
+            width: dialSize,
+            child: GestureDetector(
+              onPanUpdate: (details) => _handleDialTouch(details.localPosition, dialSize),
+              onPanEnd: (details) => _handleDialTouchEnd(),
+              onTapUp: (details) {
+                _handleDialTouch(details.localPosition, dialSize);
+                _handleDialTouchEnd();
+              },
+              child: CustomPaint(
+                size: Size(dialSize, dialSize),
+                painter: _ClockDialPainter(),
+              ),
+            ),
+          ),
+          Spacer(),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              OutLineButton(title: "이전", onTap: () => moveToPage(4)),
+              SizedBox(width: 14,),
+              OutLineButton(title: "잘 모르겠어요.", onTap: () {
+                setState(() {
+                  unkownTime = true;
+                  selectedHour = null;
+                  selectedMinute = null;
+                });
+                moveToPage(6);
+              })
+            ],
+          ),
+          SizedBox(height: 55,),
         ],
       ),
     );
