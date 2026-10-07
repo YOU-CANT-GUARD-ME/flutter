@@ -23,6 +23,7 @@ class CalenderCellData {
   final bool isCurrentMonth;
   CalenderCellData({required this.isCurrentMonth, required this.date});
 }
+
 class _MyAppState extends State<MyApp> with TickerProviderStateMixin{
   late TabController tabController;
   late final AnimationController ac;
@@ -30,8 +31,8 @@ class _MyAppState extends State<MyApp> with TickerProviderStateMixin{
   final TextEditingController nameController = TextEditingController();
   final TextEditingController ageController = TextEditingController();
 
-  final cloudOffsets = [
-    Offset(180, -50), Offset(-200, -40), Offset(250, 0), Offset(-190, 25), Offset(170, 50),
+  final cloudOffset = [
+    Offset(180, -50), Offset(-200, -40), Offset(250, 0), Offset(-190, -25), Offset(170, 50),
   ];
 
   String selectedGender = "";
@@ -107,9 +108,9 @@ class _MyAppState extends State<MyApp> with TickerProviderStateMixin{
     return "${d.year}.${d.month.toString().padLeft(2, '0')}.${d.day.toString().padLeft(2, '0')}";
   }
 
-  String get formatBirthTime {
+  String get formateBirthTime {
     if(unknownTime) return "잘 모르겠어요";
-    if(selectedHour == null || selectedMinute == null) return "태어난 시가을 선택해주세요";
+    if(selectedHour == null || selectedMinute == null) return "태어난 시간을 입력해주세요";
     final hour24 = to24Hour(selectedHour!, isAm);
     return "${hour24.toString().padLeft(2, '0')}:${selectedMinute.toString().padLeft(2, '0')}";
   }
@@ -140,10 +141,13 @@ class _MyAppState extends State<MyApp> with TickerProviderStateMixin{
     int nextDay = 1;
     while(days.length % 7 != 0) {
       days.add(CalenderCellData(isCurrentMonth: false, date: DateTime(year, month + 1, nextDay)));
-      nextDay++;
     }
 
     return days;
+  }
+
+  bool isSameDate(DateTime a, DateTime b) {
+    return a.year == b.year && a.month == b.month && a.day == b.day;
   }
 
   Future<void> showYearMonthPicker() async {
@@ -154,45 +158,52 @@ class _MyAppState extends State<MyApp> with TickerProviderStateMixin{
       context: context,
       backgroundColor: Color(0xff2D1248),
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(24))
+        borderRadius: BorderRadiusGeometry.vertical(top: Radius.circular(24))
       ),
       builder: (context) => StatefulBuilder(builder: (context, setModalState) {
         return SizedBox(
           height: 320,
           child: Column(
             children: [
-              Row(
-                children: [
-                  Expanded(
-                    child: ListWheelScrollView.useDelegate(
-                      itemExtent: 44,
-                      perspective: 0.003,
-                      controller: FixedExtentScrollController(initialItem: tempYear - 1900),
-                      onSelectedItemChanged: (value) => setModalState(() => tempYear = 1900 + value),
-                      childDelegate: ListWheelChildBuilderDelegate(childCount: 201, builder: (context, index) {
-                        final year = 1900 + index;
-                        final isSelected = year == tempYear;
-                        return Center(
-                          child: Text("$year년", style: TextStyle(color: isSelected ? Colors.white : Colors.grey, fontSize: isSelected ? 22 : 20, fontWeight: FontWeight.w700, fontFamily: "M"),),
-                        );
-                      }),
+              Padding(
+                padding: EdgeInsetsGeometry.symmetric(vertical: 20),
+                child: Text("연도 / 월 선택", style: TextStyle(color: Colors.white, fontSize: 20, fontFamily: "M", fontWeight: FontWeight.w700),),
+              ),
+              Expanded(
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: ListWheelScrollView.useDelegate(
+                        itemExtent: 44,
+                        perspective: 0.003,
+                        controller: FixedExtentScrollController(initialItem:  tempYear - 1900),
+                        onSelectedItemChanged: (value) => setModalState(() => tempYear = 1900 + value),
+                        childDelegate: ListWheelChildBuilderDelegate(builder: (context, index) {
+                          final year = 1900 + index;
+                          final isSelected = year == tempYear;
+                          return Center(
+                            child: Text("$year년", style: TextStyle(color: isSelected ? Colors.white : Colors.grey, fontSize: isSelected ? 22 : 20, fontWeight: FontWeight.w700, fontFamily: "M"),),
+                          );
+                        }),
+                      ),
                     ),
-                  ),Expanded(
-                    child: ListWheelScrollView.useDelegate(
-                      itemExtent: 44,
-                      perspective: 0.003,
-                      controller: FixedExtentScrollController(initialItem: tempMonth - 1),
-                      onSelectedItemChanged: (value) => setModalState(() => tempMonth = value + 1),
-                      childDelegate: ListWheelChildBuilderDelegate(childCount: 12, builder: (context, index) {
-                        final month = index + 1;
-                        final isSelected = month == tempMonth;
-                        return Center(
-                          child: Text("$month월", style: TextStyle(color: isSelected ? Colors.white : Colors.grey, fontSize: isSelected ? 22 : 20, fontWeight: FontWeight.w700, fontFamily: "M"),),
-                        );
-                      }),
-                    ),
-                  ),
-                ],
+                    Expanded(
+                      child: ListWheelScrollView.useDelegate(
+                        itemExtent: 44,
+                        perspective: 0.003,
+                        controller: FixedExtentScrollController(initialItem:  tempMonth - 1),
+                        onSelectedItemChanged: (value) => setModalState(() => tempYear = value + 1),
+                        childDelegate: ListWheelChildBuilderDelegate(builder: (context, index) {
+                          final month = index + 1;
+                          final isSelected = month == tempMonth;
+                          return Center(
+                            child: Text("$month월", style: TextStyle(color: isSelected ? Colors.white : Colors.grey, fontSize: isSelected ? 22 : 20, fontWeight: FontWeight.w700, fontFamily: "M"),),
+                          );
+                        }),
+                      ),
+                    )
+                  ],
+                ),
               ),
               Padding(
                 padding: EdgeInsetsGeometry.all(20),
@@ -202,14 +213,13 @@ class _MyAppState extends State<MyApp> with TickerProviderStateMixin{
                       calenderYear = tempYear;
                       calenderMonth = tempMonth;
                     });
-                    Navigator.pop(context);
                   },
                   child: Container(
                     width: double.infinity,
                     height: 50,
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(100),
-                      color: Colors.white,
+                      color: Colors.white
                     ),
                     alignment: Alignment.center,
                     child: Text("확인", style: TextStyle(color: Color(0xff340B57), fontSize: 16, fontFamily: "N", fontWeight: FontWeight.w600),),
@@ -228,7 +238,7 @@ class _MyAppState extends State<MyApp> with TickerProviderStateMixin{
   }
 
   double intervalValue(double start, double end) {
-    final t = ((ca.value - start) / (end - start)).clamp(0.0, 1.0);
+    final t = ((ca.value - start) / (end - start));
     return Curves.easeOut.transform(t);
   }
 
@@ -243,11 +253,13 @@ class _MyAppState extends State<MyApp> with TickerProviderStateMixin{
     ca = CurvedAnimation(parent: ac, curve: Curves.easeInOutCirc);
     tabController = TabController(length: 7, vsync: this);
     tabController.addListener(() {
-      if(tabController.indexIsChanging && tabController.index == 5) {
-        _isSelectingHour = true;
-        if(selectedHour != null) _tempHour = selectedHour!;
-        if(selectedMinute != null) _tempMinute = selectedMinute!;
-      }
+      setState(() {
+        if(!tabController.indexIsChanging && tabController.index == 5) {
+          _isSelectingHour = true;
+          if(selectedHour != null) _tempHour = selectedHour!;
+          if(selectedMinute != null) _tempMinute = selectedMinute!;
+        }
+      });
     });
   }
 
@@ -271,22 +283,27 @@ class _MyAppState extends State<MyApp> with TickerProviderStateMixin{
               child: RepaintBoundary(
                 child: Column(
                   children: [
-                    AnimatedBuilder(animation: ca, builder: (context, child) {
-                      final value = intervalValue(0.1, 0.35);
-                      return Transform.translate(
-                        offset: Offset(-20 * (1 - value), -20 * (2 - value)),
-                        child: Opacity(opacity: value, child: child,),
-                      );
-                    }, child: Image.asset("assets/img/moon.png", width: 130,),),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        AnimatedBuilder(animation: ca, builder: (context, child) {
+                          final value = intervalValue(0.1, 0.35);
+                          return Transform.translate(
+                            offset: Offset(-20 * (1 - value), -20 * (2 - value)),
+                            child: Opacity(opacity: value, child: child,),
+                          );
+                        }, child: Image.asset("assets/img/moon", width: 130,),)
+                      ],
+                    ),
                     Stack(
                       children: [
-                        ...cloudOffsets.map((e) => AnimatedBuilder(animation: ca, builder: (context, child) {
+                        ...cloudOffset.map((e) => AnimatedBuilder(animation: ca, builder: (context, child) {
                           final value = intervalValue(0.2, 0.45);
                           return Transform.translate(
                             offset: Offset(e.dx - (e.dx.sign * 90 * value), e.dy),
                             child: Opacity(opacity: value, child: child,),
                           );
-                        }, child: Image.asset("assets/img/cloud.png", width: 220,),))
+                        }, child: Image.asset("assets/img/cloud", width: 220,),))
                       ],
                     )
                   ],
@@ -298,12 +315,13 @@ class _MyAppState extends State<MyApp> with TickerProviderStateMixin{
                 controller: tabController,
                 physics: NeverScrollableScrollPhysics(),
                 children: [
-                  buildInfoPage(),
+                  buildIntroPage(),
                   buildNamePage(),
+                  buildAgePage(),
                   buildGenderPage(),
                   buildBirthDatePage(),
                   buildBirthTimePage(),
-                  buildConfirmPage(),
+                  buildCOnfirmPage(),
                 ],
               ),
             ),
@@ -327,48 +345,10 @@ class _MyAppState extends State<MyApp> with TickerProviderStateMixin{
                   )),
                 ),
               ),
-            ),
-            Offstage(
-              offstage: true,
-              child: SizedBox(
-                width: 1,
-                height: 1,
-                child: TextFormField(
-                  decoration: InputDecoration(
-                    enabledBorder: OutlineInputBorder(),
-                    focusedBorder: OutlineInputBorder(),
-                    border: OutlineInputBorder(),
-                  ),
-                ),
-              ),
             )
           ],
         ),
       ),
     );
-  }
-
-  Widget logoAndTitle(String title) {
-    return Column(
-      children: [
-        Image.asset("assets/img/Daily Tarot.png", width: 210,),
-        Image.asset("assets/img/graphic.png", width: 60,)
-      ],
-    );
-  }
-
-  Widget buildIntroPage() {
-    return AnimatedBuilder(animation: ca, builder: (context, child) {
-      final logoValue = intervalValue(0.1, 0.35);
-      final titleValue = intervalValue(0.35, 0.7);
-      final buttonValue = intervalValue(0.5, 1.0);
-      return SafeArea(
-        child: Column(
-          children: [
-            SizedBox(height: 200,),
-          ],
-        ),
-      )
-    })
   }
 }
