@@ -11,10 +11,10 @@ class DefaultBackground extends StatelessWidget {
       height: double.infinity,
       decoration: BoxDecoration(
         gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [Color(0xff340B57), Color(0xff1D0630)]
-        )
+          begin: AlignmentGeometry.topCenter,
+          end: AlignmentGeometry.bottomCenter,
+          colors: [Color(0xff340B57), Color(0xff1D0630)]
+        ),
       ),
       child: child,
     );
