@@ -10,7 +10,7 @@ class BottomActionButton extends StatelessWidget {
     required this.img,
     required this.title,
     required this.checkedIcon,
-    required this.onTap,
+    required this.onTap
   });
 
   @override
@@ -25,16 +25,18 @@ class BottomActionButton extends StatelessWidget {
             begin: Alignment(-5, -5),
             end: AlignmentGeometry.centerRight,
             colors: [Colors.yellow.shade200, Color(0xff2A0050)]
-          ),
+          )
         ),
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
             if(img)
               Image.asset("assets/img/moon.png", width: 40,),
+            SizedBox(width: 5,),
             Text(title, style: TextStyle(color: Colors.white, fontSize: 17, fontFamily: "M", fontWeight: FontWeight.w700),),
+            SizedBox(width: 8,),
             if(checkedIcon)
-              Icon(Icons.arrow_forward_ios_rounded, size: 18, color: Colors.white70,)
+              Icon(Icons.arrow_forward_ios_rounded, size: 18, color: Colors.white70,),
           ],
         ),
       ),
