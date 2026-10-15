@@ -14,7 +14,7 @@ class DefaultBackground extends StatelessWidget {
           begin: AlignmentGeometry.topCenter,
           end: AlignmentGeometry.bottomCenter,
           colors: [Color(0xff340B57), Color(0xff1D0630)]
-        ),
+        )
       ),
       child: child,
     );

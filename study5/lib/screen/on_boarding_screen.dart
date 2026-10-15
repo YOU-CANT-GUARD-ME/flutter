@@ -5,6 +5,8 @@ import 'package:daily_tarot_app/components/default_background.dart';
 import 'dart:math';
 import 'package:flutter_svg/flutter_svg.dart';
 
+import 'home_screen.dart';
+
 class OnBoardingScreen extends StatefulWidget {
   const OnBoardingScreen({super.key});
 
@@ -26,7 +28,7 @@ class _OnBoardingScreenState extends State<OnBoardingScreen> with TickerProvider
   final TextEditingController ageController = TextEditingController();
 
   final cloudOffset = [
-    Offset(180, -50), Offset(-200, -40), Offset(250, 0), Offset(-190, -25), Offset(170, 50),
+    Offset(180, -50), Offset(-200, -40), Offset(250, 0), Offset(-190, 25), Offset(170, 50),
   ];
 
   String selectedGender = "";
@@ -153,7 +155,7 @@ class _OnBoardingScreenState extends State<OnBoardingScreen> with TickerProvider
       context: context,
       backgroundColor: Color(0xff2D1248),
       shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.vertical(top: Radius.circular(24))
+        borderRadius: BorderRadiusGeometry.circular(24),
       ),
       builder: (context) => StatefulBuilder(builder: (context, setModalState) {
         return SizedBox(
@@ -161,47 +163,46 @@ class _OnBoardingScreenState extends State<OnBoardingScreen> with TickerProvider
           child: Column(
             children: [
               Padding(
-                padding: EdgeInsets.symmetric(vertical: 20),
+                padding: EdgeInsetsGeometry.symmetric(vertical: 20),
                 child: Text("연도 / 월 선택", style: TextStyle(color: Colors.white, fontSize: 20, fontFamily: "M", fontWeight: FontWeight.w700),),
               ),
               Expanded(
-                  child: Row(
-                    children: [
-                      Expanded(
-                          child: ListWheelScrollView.useDelegate(
-                              itemExtent: 44,
-                              perspective: 0.003,
-                              controller: FixedExtentScrollController(initialItem: tempYear - 1900),
-                              onSelectedItemChanged: (value) => setModalState(() => tempYear = 1900 + value,),
-                              childDelegate: ListWheelChildBuilderDelegate(childCount: 201, builder: (context, index) {
-                                final year = 1900 + index;
-                                final isSelected = year == tempYear;
-                                return Center(
-                                  child: Text("$year년", style: TextStyle(color: isSelected ?Colors.white : Colors.grey, fontSize: isSelected ? 22 :  20, fontFamily: "M", fontWeight: FontWeight.w700),),
-                                );
-                              },)
-                          )
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: ListWheelScrollView.useDelegate(
+                        itemExtent: 44,
+                        perspective: 0.003,
+                        controller: FixedExtentScrollController(initialItem:  tempYear - 1900),
+                        onSelectedItemChanged: (value) => setModalState(() => tempYear = 1900 + value),
+                        childDelegate: ListWheelChildBuilderDelegate(childCount: 201, builder: (context, index) {
+                          final year = 1900 + index;
+                          final isSelected = year == tempYear;
+                          return Center(
+                            child: Text("$year년", style: TextStyle(color: isSelected ? Colors.white : Colors.grey, fontSize: isSelected ? 22 : 20, fontFamily: "M", fontWeight: FontWeight.w700),),
+                          );
+                        }),
                       ),
-                      Expanded(
-                          child: ListWheelScrollView.useDelegate(
-                              itemExtent: 44,
-                              perspective: 0.003,
-                              controller: FixedExtentScrollController(initialItem: tempMonth - 1),
-                              onSelectedItemChanged: (value) => setModalState(() => tempMonth = value + 1,),
-                              childDelegate: ListWheelChildBuilderDelegate(childCount: 12, builder: (context, index) {
-                                final month = index + 1;
-                                final isSelected = month == tempMonth;
-                                return Center(
-                                  child: Text("$month월", style: TextStyle(color: isSelected ?Colors.white : Colors.grey, fontSize: isSelected ? 22 :  20, fontFamily: "M", fontWeight: FontWeight.w700),),
-                                );
-                              },)
-                          )
-                      )
-                    ],
-                  )
+                    ),Expanded(
+                      child: ListWheelScrollView.useDelegate(
+                        itemExtent: 44,
+                        perspective: 0.003,
+                        controller: FixedExtentScrollController(initialItem:  tempMonth - 1),
+                        onSelectedItemChanged: (value) => setModalState(() => tempMonth = value + 1),
+                        childDelegate: ListWheelChildBuilderDelegate(childCount: 12, builder: (context, index) {
+                          final month = index + 1;
+                          final isSelected = month == tempMonth;
+                          return Center(
+                            child: Text("$month월", style: TextStyle(color: isSelected ? Colors.white : Colors.grey, fontSize: isSelected ? 22 : 20, fontFamily: "M", fontWeight: FontWeight.w700),),
+                          );
+                        }),
+                      ),
+                    ),
+                  ],
+                ),
               ),
               Padding(
-                padding: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+                padding: EdgeInsetsGeometry.all(20),
                 child: InkWell(
                   onTap: () {
                     setState(() {
@@ -214,18 +215,18 @@ class _OnBoardingScreenState extends State<OnBoardingScreen> with TickerProvider
                     width: double.infinity,
                     height: 50,
                     decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(100),
-                        color: Colors.white
+                      borderRadius: BorderRadius.circular(100),
+                      color: Colors.white,
                     ),
                     alignment: Alignment.center,
-                    child: Text("확인", style: TextStyle(color: Color(0xff340B57), fontFamily: "N", fontWeight: FontWeight.w600, fontSize: 16),),
+                    child: Text("확인", style: TextStyle(color: Color(0xff340B57), fontSize: 16, fontFamily: "N", fontWeight: FontWeight.w600),),
                   ),
                 ),
               )
             ],
           ),
         );
-      },),
+      })
     );
   }
 
@@ -290,10 +291,11 @@ class _OnBoardingScreenState extends State<OnBoardingScreen> with TickerProvider
                         }, child: Image.asset("assets/img/moon.png", width: 130,),)
                       ],
                     ),
+                    Spacer(),
                     Stack(
                       children: [
                         ...cloudOffset.map((e) => AnimatedBuilder(animation: ca, builder: (context, child) {
-                          final value = intervalValue(0.2, 0.45);
+                          final value = intervalValue(0.1, 0.45);
                           return Transform.translate(
                             offset: Offset(e.dx - (e.dx.sign * 90 * value), e.dy),
                             child: Opacity(opacity: value, child: child,),
@@ -485,7 +487,7 @@ class _OnBoardingScreenState extends State<OnBoardingScreen> with TickerProvider
             child: Form(
               autovalidateMode: AutovalidateMode.onUnfocus,
               child: TextFormField(
-                controller: nameController,
+                controller: ageController,
                 keyboardType: TextInputType.number,
                 textInputAction: TextInputAction.done,
                 style: TextStyle(color: Colors.white, fontSize: 16),
@@ -554,17 +556,18 @@ class _OnBoardingScreenState extends State<OnBoardingScreen> with TickerProvider
           border: Border.all(color: Colors.white70, width: 1.5),
           color: selected ? Colors.white24 : Colors.transparent
         ),
+        alignment: Alignment.center,
         child: SvgPicture.asset(icon, width: 55,),
       ),
     );
   }
-
+  
   Widget buildGenderPage() {
     return SafeArea(
       child: Column(
         children: [
           SizedBox(height: 120,),
-          logoAndTitle("성별을 선탣해주세요."),
+          logoAndTitle("성별을 선택해주세요."),
           SizedBox(height: 90,),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -581,7 +584,7 @@ class _OnBoardingScreenState extends State<OnBoardingScreen> with TickerProvider
                   selectedGender = "남성";
                 });
                 moveToPage(4);
-              })
+              }),
             ],
           ),
           Spacer(),
@@ -591,7 +594,7 @@ class _OnBoardingScreenState extends State<OnBoardingScreen> with TickerProvider
       ),
     );
   }
-
+  
   Widget buildBirthDatePage() {
     final days = buildCalenderDays(calenderYear, calenderMonth);
     return SafeArea(
@@ -621,17 +624,309 @@ class _OnBoardingScreenState extends State<OnBoardingScreen> with TickerProvider
                 final date = cell.date;
                 final isSelected = selectedBirthDate != null && isSameDate(selectedBirthDate!, date);
                 return InkWell(
+                  borderRadius: BorderRadius.circular(100),
                   onTap: cell.isCurrent ? () {
                     setState(() {
                       selectedBirthDate = date;
                     });
-                  },
-                )
+                    moveToPage(5);
+                  } : null,
+                  child: Container(
+                    width: 38,
+                    height: 38,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(100),
+                      color: isSelected ? Colors.white : Colors.transparent,
+                    ),
+                    alignment: Alignment.center,
+                    child: Text("${date.day}", style: TextStyle(color: isSelected ? Color(0xff340B57) : Colors.white.withValues(alpha: cell.isCurrent ? 1 : 0.25), fontSize: 14, fontFamily: "M", fontWeight: FontWeight.w700),),
+                  ),
+                );
               },
             ),
           )
         ],
       ),
-    )
+    );
+  }
+  
+  Widget buildBirthTimePage() {
+    final double dialSize = 200;
+    return SafeArea(
+      child: Column(
+        children: [
+          SizedBox(height: 120,),
+          logoAndTitle("태어난 시간을 입력해주세요."),
+          SizedBox(height: 20,),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              GestureDetector(
+                onTap: () {
+                  setState(() {
+                    _isSelectingHour = true;
+                  });
+                },
+                child: Container(
+                  width: 60,
+                  height: 50,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(
+                      color: _isSelectingHour ? Colors.white54 : Colors.transparent,
+                    ),
+                  ),
+                  alignment: Alignment.center,
+                  child: Text(_tempHour.toString().padLeft(2, '0'), style: TextStyle(color: _isSelectingHour ? Colors.white : Colors.white54, fontSize: 28, fontFamily: "M", fontWeight: FontWeight.w700),),
+                ),
+              ),
+              Padding(
+                padding: EdgeInsetsGeometry.symmetric(horizontal: 20),
+                child: Text(":", style: TextStyle(color: Colors.white, fontSize: 28, fontFamily: "M", fontWeight: FontWeight.w700),),
+              ),
+              GestureDetector(
+                onTap: () {
+                  setState(() {
+                    _isSelectingHour = false;
+                  });
+                },
+                child: Container(
+                  width: 60,
+                  height: 50,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(
+                      color: !_isSelectingHour ? Colors.white54 : Colors.transparent,
+                      width: 1.5
+                    ),
+                  ),
+                  alignment: Alignment.center,
+                  child: Text(_tempMinute.toString().padLeft(2, '0'), style: TextStyle(color: !_isSelectingHour ? Colors.white : Colors.white54, fontSize: 28, fontFamily: "M", fontWeight: FontWeight.w700),),
+                ),
+              ),
+              SizedBox(width: 20,),
+              Column(
+                children: [
+                  GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        isAm = true;
+                      });
+                    },
+                    child: Container(
+                      padding: EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.vertical(top: Radius.circular(12)),
+                        border: Border.all(color: isAm ? Colors.white : Colors.white54, width: 1.5)
+                      ),
+                      child: Text("AM", style: TextStyle(color: isAm ? Colors.white : Colors.white54, fontSize: 14, fontFamily: "M", fontWeight: FontWeight.w700),),
+                    ),
+                  ),GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        isAm = false;
+                      });
+                    },
+                    child: Container(
+                      padding: EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.vertical(bottom: Radius.circular(12)),
+                        border: Border.all(color: !isAm ? Colors.white : Colors.white54)
+                      ),
+                      child: Text("PM", style: TextStyle(color: !isAm ? Colors.white : Colors.white54, fontSize: 14, fontFamily: "M", fontWeight: FontWeight.w700),),
+                    ),
+                  ),
+                ],
+              )
+            ],
+          ),
+          SizedBox(height: 20,),
+          SizedBox(
+            width: dialSize,
+            height: dialSize,
+            child: GestureDetector(
+              onPanUpdate: (details) => _handleDialTouch(details.localPosition, dialSize),
+              onPanEnd: (details) => _handleDialTouchEnd(),
+              onTapUp: (details) {
+                _handleDialTouch(details.localPosition, dialSize);
+                _handleDialTouchEnd();
+              },
+              child: CustomPaint(
+                size: Size(dialSize, dialSize),
+                painter: _ClockDialPainter(isHourMode: _isSelectingHour, selectedValue: _isSelectingHour ? _tempHour : _tempMinute),
+              ),
+            ),
+          ),
+          Spacer(),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              OutLineButton(title: "이전", onTap: () => moveToPage(3)),
+              SizedBox(width: 14,),
+              OutLineButton(title: "잘 모르겠어요", onTap: () {
+                setState(() {
+                  unknownTime = true;
+                  selectedHour = null;
+                  selectedMinute = null;
+                });
+              })
+            ],
+          ),
+          SizedBox(height: 55,),
+        ],
+      ),
+    );
+  }
+
+  Widget infoBox({required String title, required String value, required VoidCallback onTap}) {
+    return Padding(
+      padding: EdgeInsetsGeometry.symmetric(horizontal: 50, vertical: 6),
+      child: InkWell(
+        onTap: onTap,
+        child: Container(
+          padding: EdgeInsets.symmetric(horizontal: 28, vertical: 14),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(100),
+            border: Border.all(color: Colors.white60, width: 1.5),
+          ),
+          child: Row(
+            children: [
+              Text("$title : ", style: TextStyle(color: Colors.white, fontSize: 16),),
+              Expanded(child: Text(value, style: TextStyle(color: Colors.white, fontSize: 16), overflow: TextOverflow.ellipsis,),)
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget buildConfirmPage() {
+    return SafeArea(
+      child: Column(
+        children: [
+          SizedBox(height: 120,),
+          logoAndTitle("입력한 정보가 맞는지 확인해주세요."),
+          SizedBox(height: 40,),
+          infoBox(title: "이름", value: nameController.text, onTap: () => moveToPage(1)),
+          Padding(
+            padding: EdgeInsetsGeometry.symmetric(horizontal: 50, vertical: 6),
+            child: Row(
+              children: [
+                Expanded(
+                  child: InkWell(
+                    onTap: () => moveToPage(2),
+                    child: Container(
+                      padding: EdgeInsets.symmetric(horizontal: 28, vertical: 14),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(100),
+                        border: Border.all(color: Colors.white60, width: 1.5),
+                      ),
+                      child: Text("나이 : ${nameController.text}세", style: TextStyle(color: Colors.white, fontSize: 16),),
+                    ),
+                  ),
+                ),
+                SizedBox(width: 18,),
+                InkWell(
+                  onTap: () => moveToPage(3),
+                  child: Container(
+                    width: 55,
+                    height: 55,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(100),
+                      border: Border.all(color: Colors.white60, width: 1.5),
+                    ),
+                    alignment: Alignment.center,
+                    child: SvgPicture.asset(selectedGender == "남성" ? "assets/icons/male_24dp_E3E3E3_FILL0_wght100_GRAD0_opsz24.svg" : "assets/icons/female_24dp_E3E3E3_FILL0_wght100_GRAD0_opsz24.svg"),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          infoBox(title: "생일", value: formatBirthDate, onTap: () => moveToPage(4)),
+          infoBox(title: "태어난 시간", value: formatBirthTime, onTap: () => moveToPage(5)),
+          SizedBox(height: 60,),
+          BottomActionButton(img: false, title: "시작하기", checkedIcon: true, onTap: () => Navigator.pushAndRemoveUntil(context, PageRouteBuilder(pageBuilder: (context, animation, secondaryAnimation) {
+            return HomeScreen();
+          }, transitionsBuilder: (context, animation, secondaryAnimation, child) {
+            return FadeTransition(opacity: animation, child: child,);
+          }), (route) => false))
+        ],
+      ),
+    );
+  }
+}
+
+class _ClockDialPainter extends CustomPainter {
+  final bool isHourMode;
+  final int selectedValue;
+  _ClockDialPainter({required this.isHourMode, required this.selectedValue});
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final center = Offset(size.width / 2, size.height / 2);
+    final radius = size.width / 2;
+    final numberRadius = radius - 24;
+
+    canvas.drawCircle(center, radius, Paint()..color=Colors.white..style=PaintingStyle.stroke..strokeWidth=1.5);
+
+    double selectedAngle;
+    if(isHourMode) {
+      selectedAngle = (selectedValue % 12) / 12 * 2 * pi;
+    } else {
+      selectedAngle = selectedValue / 60 * 2 * pi;
+    }
+
+    final handX = center.dx + (numberRadius - 18) * sin(selectedAngle);
+    final handY = center.dy - (numberRadius - 18) * cos(selectedAngle);
+
+    canvas.drawLine(center, Offset(handX, handY), Paint()..color=Colors.white..strokeWidth=1.5);
+    canvas.drawCircle(center, 4, Paint()..color=Colors.white);
+
+    if(isHourMode) {
+      for(int i = 1; i <= 12; i++) {
+        final angle = i / 12 * 2 * pi;
+        final x = center.dx + numberRadius * sin(angle);
+        final y = center.dy - numberRadius * cos(angle);
+        final isSelected = i == selectedValue;
+
+        if(isSelected) {
+          canvas.drawCircle(Offset(x, y), 18, Paint()..color=Colors.white..style=PaintingStyle.stroke..strokeWidth=1.5);
+        }
+
+        final tp = TextPainter(
+          text: TextSpan(
+            text: "$i",
+            style: TextStyle(color: Colors.white, fontSize: 17, fontFamily: "M", fontWeight: FontWeight.w700),
+          ),
+          textDirection: TextDirection.ltr,
+        )..layout();
+        tp.paint(canvas, Offset(x - tp.width / 2, y - tp.height / 2));
+      }
+    } else {
+      for(int i = 0; i < 12; i++) {
+        final minVal = i * 5;
+        final angle = i / 12 * 2 * pi;
+        final x = center.dx + numberRadius * sin(angle);
+        final y = center.dy - numberRadius * cos(angle);
+        final isSelected = minVal == selectedValue;
+
+        if(isSelected) {
+          canvas.drawCircle(Offset(x, y), 18, Paint()..color=Colors.white..style=PaintingStyle.stroke..strokeWidth=1.5);
+        }
+
+        final tp = TextPainter(
+          text: TextSpan(
+            text: "$minVal".padLeft(2, '0'),
+            style: TextStyle(color: Colors.white, fontSize: 17, fontFamily: "M", fontWeight: FontWeight.w700),
+          ),
+          textDirection: TextDirection.ltr,
+        )..layout();
+        tp.paint(canvas, Offset(x - tp.width / 2, y - tp.height / 2));
+      }
+    }
+  }
+
+  bool shouldRepaint(covariant _ClockDialPainter old) {
+    return old.isHourMode != isHourMode || old.selectedValue != selectedValue;
   }
 }

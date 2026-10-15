@@ -10,7 +10,7 @@ class BottomActionButton extends StatelessWidget {
     required this.img,
     required this.title,
     required this.checkedIcon,
-    required this.onTap
+    required this.onTap,
   });
 
   @override
@@ -25,7 +25,7 @@ class BottomActionButton extends StatelessWidget {
             begin: Alignment(-5, -5),
             end: AlignmentGeometry.centerRight,
             colors: [Colors.yellow.shade200, Color(0xff2A0050)]
-          )
+          ),
         ),
         child: Row(
           mainAxisSize: MainAxisSize.min,

@@ -19,13 +19,13 @@ class OutLineButton extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(title == "이전" ? Icons.arrow_back_ios_rounded: null, size: 18, color: Colors.white70,),
+            Icon(title == "이전" ? Icons.arrow_back_ios_rounded : null, size: 18, color: Colors.white70,),
             if(title == "이전")
               SizedBox(width: 10,),
-            Text(title, style: TextStyle(color: Colors.white, fontSize: 16, fontFamily: "N", fontWeight: FontWeight.w600),),
+            Text(title, style: TextStyle(color: Colors.white, fontSize: 16, fontFamily: "N", fontWeight: FontWeight.w700),),
             if(title == "잘 모르겠어요")
               SizedBox(width: 10,),
-            Icon(title == "잘 모르겠어요" ? Icons.arrow_forward_ios_rounded : null, size: 18, color: Colors.white70,),
+            Icon(title == "잘 모르겠어요" ? Icons.arrow_forward_ios_rounded : null, size: 18, color: Colors.white70,)
           ],
         ),
       ),
