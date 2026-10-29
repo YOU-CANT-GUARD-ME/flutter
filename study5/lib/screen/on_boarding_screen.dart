@@ -1,9 +1,11 @@
 import 'dart:math';
+import 'dart:ui_web';
 
 import 'package:flutter/material.dart';
 import 'package:daily_tarot_app/components/default_background.dart';
 import 'package:daily_tarot_app/components/out_line_button.dart';
 import 'package:daily_tarot_app/components/bottom_action_button.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 class OnBoardingScreen extends StatefulWidget {
   const OnBoardingScreen({super.key});
@@ -528,5 +530,261 @@ class _OnBoardingScreenState extends State<OnBoardingScreen> with TickerProvider
     );
   }
 
+   Widget genderButton({required String icon, required String label, required VoidCallback onTap}) {
+      final selected = label == selectedGender;
+      return InkWell(
+        onTap: onTap,
+        child: Container(
+          width: 80,
+          height: 80,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(20),
+            border: Border.all(color: Colors.white60, width: 1.5),
+            color: selected ? Colors.white24 : Colors.transparent
+          ),
+          alignment: Alignment.center,
+          child: SvgPicture.asset(icon, width: 55,),
+        ),
+      );
+   }
 
+   Widget buildGenderPage() {
+      return SafeArea(
+        child: Column(
+          children: [
+            SizedBox(height: 120,),
+            logoAndTitle("태어난 날짜를 입력해주세요."),
+            SizedBox(height: 90,),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                genderButton(icon: "assets/icons/female_24dp_E3E3E3_FILL0_wght100_GRAD0_opsz24.svg", label: "여성", onTap: () {
+                  setState(() {
+                    selectedGender = "여성";
+                  });
+                  moveToPage(4);
+                }),
+                SizedBox(width: 25,),
+                genderButton(icon: "assets/icons/male_24dp_E3E3E3_FILL0_wght100_GRAD0_opsz24.svg", label: "남성", onTap: () {
+                  setState(() {
+                    selectedGender = "남성";
+                  });
+                  moveToPage(4);
+                }),
+              ],
+            ),
+            Spacer(),
+            OutLineButton(title: "이전", onTap: () => moveToPage(2)),
+            SizedBox(height: 55,),
+          ],
+        ),
+      );
+   }
+
+   Widget buildBirthDatePage() {
+      final days = buildCalenderDays(calenderYear, calenderMonth);
+      return SafeArea(
+        child: Column(
+          children: [
+            SizedBox(height: 120,),
+            logoAndTitle("태어난 시간을 입력해주세요."),
+            SizedBox(height: 25,),
+            InkWell(
+              onTap: () => showYearMonthPicker(),
+              child: Text("$calenderYear.$calenderMonth", style: TextStyle(color: Colors.white, fontSize: 24, fontFamily: "M", fontWeight: FontWeight.w700),),
+            ),
+            Padding(
+              padding: EdgeInsetsGeometry.symmetric(horizontal: 40),
+              child: GridView.builder(
+                shrinkWrap: true,
+                physics: NeverScrollableScrollPhysics(),
+                itemCount: days.length,
+                 gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                   crossAxisCount: 7,
+                   mainAxisSpacing: 12,
+                   crossAxisSpacing: 6,
+                   childAspectRatio: 1
+                 ),
+                itemBuilder: (context, index) {
+                  final cell =  days[index];
+                  final date = cell.date;
+                  final isSelected = selectedBirthDate != null && isSameDate(selectedBirthDate!, date);
+                  return InkWell(
+                    borderRadius: BorderRadius.circular(100),
+                    onTap: cell.isCurrent ? () {
+                      setState(() {
+                        selectedBirthDate = date;
+                      });
+                      moveToPage(5);
+                    } : null,
+                    child: Container(
+                      width: 38,
+                      height: 38,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(100),
+                        color: isSelected ? Colors.white : Colors.transparent,
+                      ),
+                      alignment: Alignment.center,
+                      child: Text("${date.day}", style: TextStyle(color: isSelected ? Color(0xff340B57) : Colors.white.withValues(alpha: cell.isCurrent ? 1 : 0.25), fontSize: 14, fontFamily: "M"),),
+                    ),
+                  );
+                },
+              ),
+            ),
+            Spacer(),
+            OutLineButton(title: "이전", onTap: () => moveToPage(3)),
+            SizedBox(height: 55,),
+          ],
+        ),
+      );
+   }
+
+   Widget buildBirthTimePage() {
+      final double dialSize = 200;
+      return SafeArea(
+        child: Column(
+          children: [
+            SizedBox(height: 120,),
+            logoAndTitle("태어난 시간을 입력해주세요."),
+            SizedBox(height: 20,),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                GestureDetector(
+                  onTap: () {
+                    _isSelectingHour = true;
+                  },
+                  child: Container(
+                    width: 60,
+                    height: 50,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(color: _isSelectingHour ? Colors.white54 : Colors.transparent, width: 1.5),
+                    ),
+                    alignment: Alignment.center,
+                    child: Text(_tempHour.toString().padLeft(2, '0'), style: TextStyle(color: _isSelectingHour ? Colors.white : Colors.white54, fontSize: 28, fontFamily: "M", fontWeight: FontWeight.w700),),
+                  ),
+                ),
+                Padding(
+                  padding: EdgeInsetsGeometry.symmetric(horizontal: 20),
+                  child: Text(":", style: TextStyle(color: Colors.white, fontSize: 28, fontFamily: "M", fontWeight: FontWeight.w700),),
+                ),
+                GestureDetector(
+                  onTap: () {
+                    _isSelectingHour = false;
+                  },
+                  child: Container(
+                    width: 60,
+                    height: 50,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(color: !_isSelectingHour ? Colors.white54 : Colors.transparent, width: 1.5),
+                    ),
+                    alignment: Alignment.center,
+                    child: Text(_tempMinute.toString().padLeft(2, '0'), style: TextStyle(color: !_isSelectingHour ? Colors.white : Colors.white54, fontSize: 28, fontFamily: "M", fontWeight: FontWeight.w700),),
+                  ),
+                ),
+                SizedBox(width: 20,),
+                Column(
+                  children: [
+                    GestureDetector(
+                      onTap: () {
+                        isAm = true;
+                      },
+                      child: Container(
+                        padding: EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.vertical(top: Radius.circular(12)),
+                          border: Border.all(color: isAm ? Colors.white : Colors.white54, width: 1.5),
+                        ),
+                        child: Text("AM", style: TextStyle(color: isAm ? Colors.white : Colors.white54, fontSize: 14, fontFamily: "M", fontWeight: FontWeight.w700),),
+                      ),
+                    ),GestureDetector(
+                      onTap: () {
+                        isAm = false;
+                      },
+                      child: Container(
+                        padding: EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.vertical(bottom: Radius.circular(12)),
+                          border: Border.all(color: isAm ? Colors.white : Colors.white54, width: 1.5),
+                        ),
+                        child: Text("PM", style: TextStyle(color: isAm ? Colors.white : Colors.white54, fontSize: 14, fontFamily: "M", fontWeight: FontWeight.w700),),
+                      ),
+                    ),
+                  ],
+                )
+              ],
+            ),
+            SizedBox(height: 20,),
+            SizedBox(
+              width: dialSize,
+              height: dialSize,
+              child: GestureDetector(
+                onPanUpdate: (details) => _handleDialTouch(details.localPosition, dialSize),
+                onPanEnd: (details) => _handleDialTouchEnd(),
+                onTapUp: (details) {
+                  _handleDialTouch(details.localPosition, dialSize);
+                  _handleDialTouchEnd();
+                },
+                child: CustomPaint(
+                  size: Size(dialSize, dialSize),
+                  painter: _ClockDialPainter,
+                ),
+              ),
+            ),
+            Spacer(),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                OutLineButton(title: "이전", onTap: () => moveToPage(3)),
+                SizedBox(width: 14,),
+                OutLineButton(title: "잘 모르겠어요", onTap: () {
+                  setState(() {
+                    unknownTime = false;
+                    selectedHour = null;
+                    selectedMinute = null;
+                  });
+                }),
+                SizedBox(height: 55,),
+              ],
+            )
+          ],
+        ),
+      );
+   }
+
+   Widget infoBox({required String title, required String value, required VoidCallback onTap}) {
+      return InkWell(
+        onTap: onTap,
+        child: Padding(
+          padding: EdgeInsetsGeometry.symmetric(horizontal: 50, vertical: 6),
+          child: Container(
+            padding: EdgeInsets.symmetric(horizontal: 28, vertical: 14),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(100),
+              border: Border.all(color: Colors.white60, width: 1.5),
+            ),
+            child: Row(
+              children: [
+                Text("$title : ", style: TextStyle(color: Colors.white, fontSize: 15),),
+                Expanded(child: Text(value, style: TextStyle(color: Colors.white, fontSize: 15), overflow: TextOverflow.ellipsis,))
+              ],
+            ),
+          ),
+        ),
+      );
+   }
+
+   Widget buildConfirmPage() {
+    return SafeArea(
+      child: Column(
+        children: [
+          SizedBox(height: 120,),
+          logoAndTitle("입력한 정보가 맞는지 확인해주세요."),
+          SizedBox()
+        ],
+      ),
+    )
+   }
 }
