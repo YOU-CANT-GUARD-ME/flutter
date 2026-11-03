@@ -1,6 +1,7 @@
 import 'dart:math';
 import 'dart:ui_web';
 
+import 'package:daily_tarot_app/screen/home_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:daily_tarot_app/components/default_background.dart';
 import 'package:daily_tarot_app/components/out_line_button.dart';
@@ -97,6 +98,19 @@ class _OnBoardingScreenState extends State<OnBoardingScreen> with TickerProvider
         }
       });
     }
+  }
+  
+  String get formatBirthDate {
+    if(selectedBirthDate == null) return "태어난 날짜를 선택해주세요";
+    final d = selectedBirthDate!;
+    return "${d.year}.${d.month.toString().padLeft(2, '0')}.${d.day.toString().padLeft(2, '0')}";
+  }
+  
+  String get formatBirthTime {
+    if(unknownTime) return "잘 모르겠어요";
+    if(selectedHour == null || selectedMinute == null) return "태어난 시간을 선택해주세요";
+    final hour24 = to24Hour(selectedHour!, isAm);
+    return "${hour24.toString().padLeft(2, '0')}:${selectedMinute.toString().padLeft(2, '0')}";
   }
 
   int calenderYear = DateTime.now().year;
@@ -782,9 +796,61 @@ class _OnBoardingScreenState extends State<OnBoardingScreen> with TickerProvider
         children: [
           SizedBox(height: 120,),
           logoAndTitle("입력한 정보가 맞는지 확인해주세요."),
-          SizedBox()
+          SizedBox(height: 40,),
+          infoBox(title: "이름", value: nameController.text, onTap: () => moveToPage(1)),
+          Padding(
+            padding: EdgeInsetsGeometry.symmetric(horizontal: 50, vertical: 6),
+            child: Row(
+              children: [
+                Expanded(
+                  child: InkWell(
+                    onTap: () => moveToPage(2),
+                    child: Container(
+                      padding: EdgeInsets.symmetric(horizontal: 28, vertical: 14),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(100),
+                        border: Border.all(color: Colors.white60, width: 1.5),
+                      ),
+                      child: Text("나이 : ${ageController.text}세", style: TextStyle(color: Colors.white, fontSize: 15),),
+                    ),
+                  ),
+                ),
+                SizedBox(width: 14,),
+                InkWell(
+                  onTap: () => moveToPage(3),
+                  child: Container(
+                    width: 55,
+                    height: 55,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(100),
+                      border: Border.all(color: Colors.white60, width: 1.5),
+                    ),
+                    alignment: Alignment.center,
+                    child: SvgPicture.asset(selectedGender == "남성" ? "assets/icons/male_24dp_E3E3E3_FILL0_wght100_GRAD0_opsz24.svg" : "assets/icons/female_24dp_E3E3E3_FILL0_wght100_GRAD0_opsz24.svg", width: 40,),
+                  ),
+                )
+              ],
+            ),
+          ),
+          infoBox(title: "생일", value: formatBirthDate, onTap: () => moveToPage(4)),
+          infoBox(title: "태어난 시간", value: formatBirthTime, onTap: () => moveToPage(5)),
+          SizedBox(height: 20,),
+          BottomActionButton(img: false, title: "시작하기", checkedIcon: true, onTap: () => Navigator.pushAndRemoveUntil(context, PageRouteBuilder(pageBuilder: (context, animation, secondaryAnimation) {
+            return HomeScreen();
+          }, transitionsBuilder: (context, animation, secondaryAnimation, child) {
+            return FadeTransition(opacity: animation, child: child,);
+          }), (route) => false))
         ],
       ),
-    )
-   }
+    );
+  }
+}
+
+class _ClockDialPainter extends CustomPainter {
+  final bool isHourMode;
+  final int selectedValue;
+  _ClockDialPainter({required this.isHourMode, required this.selectedValue});
+
+  @override
+  void paint
 }
